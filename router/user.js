@@ -2,6 +2,8 @@ import express from "express";
 import User from "../Models/User.js";
 import bcrypt from "bcrypt";
 import {registerRules, loginRules, validation} from "../middleware/validator.js"
+import jwt from "jsonwebtoken";
+import isAuth from "../middleware/isAuth.js";
 
 const router = express.Router();
 
@@ -24,8 +26,21 @@ router.post("/register",registerRules(), validation, async (req, res) => {
     //end hashed password
     const newUser = new User({ email, password, pseudo, isAdmin });
     newUser.password = hashedPassword
-    await newUser.save();
-    res.status(200).send({ msg: "new user saved", response: newUser });
+
+
+   const token =  await newUser.save();
+// generate token
+
+
+
+const payload = {
+  _id : token.id,
+}
+ const userToken = await jwt.sign(payload, process.env.privateKey, {
+  expiresIn : 3600
+ })
+
+    res.status(200).send({ msg: "new user saved", response: newUser, token : `Bearer ${userToken}` });
   } catch (error) {
     res.status(500).send({ msg: "can not save a new user", response : error });
   }
@@ -45,7 +60,18 @@ router.post("/login",loginRules(), validation, async(req,res)=>{
         if(!passwordLogin){
             return  res.status(400).send({msg: "Bad credential"})  
         }
-        res.status(200).send({msg : "succes login", response : emailLogin})
+
+        //generate token 
+        const payload = {
+          _id : "581515151518415518"
+        }
+
+        const userLoginToken = await jwt.sign(payload, process.env.privateKey, {
+          expiresIn : 3600
+         })
+
+
+        res.status(200).send({msg : "succes login", response : emailLogin, token : `Bearer ${userLoginToken}`})
 
 
         
@@ -53,5 +79,10 @@ router.post("/login",loginRules(), validation, async(req,res)=>{
         res.status(500).send({ msg: "login failed", response : error });
     }
 })
+
+router.get("/current",isAuth, (req,res)=>{
+     res.send({msg : "user is auth", user : req.user})
+})
+
 
 export default router;
