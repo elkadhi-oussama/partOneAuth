@@ -31,6 +31,7 @@ router.get("/product", async (req, res) => {
 // Delete METHOD
 router.delete("/:id", async (req, res) => {
   try {
+    console.log(req.params.id)
     const productDeleted = await Product.deleteOne({ _id: req.params.id });
     productDeleted.deletedCount
       ? res
