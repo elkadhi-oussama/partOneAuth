@@ -9,10 +9,7 @@ import bodyParser from "body-parser";
 import routerProduct from "./router/product.js";
 //importation CRUD from router file for User
 import routerUser from "./router/user.js";
-// importation for read file HTML
-import path from "path";
-import { fileURLToPath } from "url";
-//end
+
 // importation cors 
 import cors from "cors"
 // declaration of variable

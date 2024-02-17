@@ -1,6 +1,6 @@
 import express from "express";
 import User from "../Models/User.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import {registerRules, loginRules, validation} from "../middleware/validator.js"
 import jwt from "jsonwebtoken";
 import isAuth from "../middleware/isAuth.js";
