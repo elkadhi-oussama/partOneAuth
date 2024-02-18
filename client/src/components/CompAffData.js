@@ -1,19 +1,26 @@
-import axios from 'axios';
-import React, { useEffect } from 'react'
+import axios from "axios";
+import React, { useEffect } from "react";
 
-const CompAffData = ({data, deleteBtn, setdata}) => {
-    useEffect(() => {
-        const getDataFromServer = async () => {
-          const response = await axios.get("http://localhost:5000/product");
-          setdata(response.data.response);
-        };
-    
-        getDataFromServer();
-      });
+const CompAffData = ({ data, deleteBtn, setdata, setuserPrivate }) => {
+  useEffect(() => {
+    const getDataFromServer = async () => {
+      const response = await axios.get("http://localhost:5000/product");
+      setdata(response.data.response);
+    };
+
+    getDataFromServer();
+  }, []);
+  useEffect(() => {
+    const getToken = localStorage.getItem("token");
+    // change private route state
+    if (getToken) {
+      setuserPrivate(true);
+    }
+  }, []);
+
   return (
     <div>
-
-{data.map((product) => (
+      {data.map((product) => (
         <div key={product._id}>
           <img src={product.image} alt="" />
           <h1> {product.name} </h1>
@@ -23,7 +30,7 @@ const CompAffData = ({data, deleteBtn, setdata}) => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default CompAffData
+export default CompAffData;

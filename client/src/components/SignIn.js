@@ -2,14 +2,12 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const SignUp = () => {
+const SignIn = ({ setadminPrivate }) => {
   const navigator = useNavigate();
   const [errorsHan, seterrorsHan] = useState(null);
   const [newUser, setnewUser] = useState({
-    pseudo: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
   const handleChange = (e) => {
     setnewUser({ ...newUser, [e.target.id]: e.target.value });
@@ -17,17 +15,14 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (newUser.password === newUser.confirmPassword) {
-        const updateUSer = delete newUser.confirmPassword;
-        const response = await axios.post(
-          "http://localhost:5000/user/register",
-          newUser
-        );
-        if (response.status === 200) {
-          navigator("/sign-in");
-        }
-      } else {
-        seterrorsHan([{ msg: "your passowrd showed be identique" }]);
+      const response = await axios.post(
+        "http://localhost:5000/user/login",
+        newUser
+      );
+      setadminPrivate(response.data.response.isAdmin);
+      if (response.status === 200) {
+        navigator("/");
+        localStorage.setItem("token", response.data.token);
       }
     } catch (error) {
       if (error.response.data.errors) {
@@ -41,12 +36,6 @@ const SignUp = () => {
     <div>
       <form>
         <input
-          type="text"
-          placeholder="pseudo"
-          id="pseudo"
-          onChange={handleChange}
-        />
-        <input
           type="email"
           placeholder="email"
           onChange={handleChange}
@@ -58,12 +47,7 @@ const SignUp = () => {
           onChange={handleChange}
           id="password"
         />
-        <input
-          type="password"
-          placeholder="confirm password"
-          onChange={handleChange}
-          id="confirmPassword"
-        />
+
         <button type="submit" onClick={handleSubmit}>
           Sign Up
         </button>
@@ -80,4 +64,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;
