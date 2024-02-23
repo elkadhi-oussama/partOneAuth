@@ -1,7 +1,10 @@
 import axios from "axios";
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const CompAffData = ({ data, deleteBtn, setdata, setuserPrivate }) => {
+const CompAffData = ({ data, setdata }) => {
+  const navigate = useNavigate()
+  //get Data
   useEffect(() => {
     const getDataFromServer = async () => {
       const response = await axios.get("http://localhost:5000/product");
@@ -10,13 +13,13 @@ const CompAffData = ({ data, deleteBtn, setdata, setuserPrivate }) => {
 
     getDataFromServer();
   }, []);
-  useEffect(() => {
-    const getToken = localStorage.getItem("token");
-    // change private route state
-    if (getToken) {
-      setuserPrivate(true);
-    }
-  }, []);
+  //end 
+    //function delete
+    const deleteBtn = async (id) => {
+      const response = await axios.delete("http://localhost:5000/" + id);
+      navigate("/");
+    };
+    //end
 
   return (
     <div>

@@ -10,8 +10,8 @@ import routerProduct from "./router/product.js";
 //importation CRUD from router file for User
 import routerUser from "./router/user.js";
 
-// importation cors 
-import cors from "cors"
+// importation cors
+import cors from "cors";
 // declaration of variable
 const app = express();
 // read data form .env file
@@ -32,7 +32,7 @@ mongoose
   .then(console.log("dataBase is Connect"))
   .catch((err) => console.log("can not connected to dataBase ", err));
 //end
-app.use(cors())
+app.use(cors());
 app.use("/", routerProduct);
 app.use("/user", routerUser);
 

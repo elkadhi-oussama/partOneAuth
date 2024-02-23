@@ -1,6 +1,15 @@
+import axios from 'axios';
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
-const AddProduct = ({setNewData,newData, handleAdd}) => {
+const AddProduct = ({setNewData,newData}) => {
+ const navigate = useNavigate()
+   // function for add data to dataBase
+   const handleAdd = async (newData) => {
+    const response = await axios.post("http://localhost:5000/product", newData);
+    navigate("/");
+  };
+  //
   return (
     <div>
         <div className="inputFiled">

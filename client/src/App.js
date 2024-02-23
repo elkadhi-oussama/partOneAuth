@@ -9,10 +9,12 @@ import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import Private from "./components/Private";
 import PrivatePageForAdmin from "./components/PrivatePageForAdmin";
+import ProtectedRoute from "./Router/ProtectedRoute";
+import WelcomePage from "./components/WelcomePage";
+import { useSelector } from "react-redux";
 function App() {
-  const navigate = useNavigate();
-  const [userPrivate, setuserPrivate] = useState(false);
-  const [adminPrivate, setadminPrivate] = useState(false);
+  const userPrivate = useSelector((state) => state.user.value);
+  const adminPrivate = useSelector((state) => state.auth.value);
   const [data, setdata] = useState([]);
   const [newData, setNewData] = useState({
     _id: Math.random(),
@@ -23,62 +25,47 @@ function App() {
   });
 
   // test user is login or not
-
-  // function for add data to dataBase
-  const handleAdd = async (newData) => {
-    const response = await axios.post("http://localhost:5000/product", newData);
-    navigate("/");
-  };
-  //
-
-  //function delete
-  const deleteBtn = async (id) => {
-    const response = await axios.delete("http://localhost:5000/" + id);
-    navigate("/");
-  };
-  //end
+  // console.log("userPrivate : ", userPrivate);
+  console.log("adminPrivate : ", adminPrivate);
   return (
     <>
-      <Hedaers
-        userPrivate={userPrivate}
-        adminPrivate={adminPrivate}
-        setuserPrivate={setuserPrivate}
-        setadminPrivate={setadminPrivate}
-      />
+      <Hedaers userPrivate={userPrivate} adminPrivate={adminPrivate} />
       <Routes>
+        <Route path="/" element={<WelcomePage />} />
         <Route
-          path="/"
-          element={
-            <CompAffData
-              data={data}
-              deleteBtn={deleteBtn}
-              setdata={setdata}
-              setuserPrivate={setuserPrivate}
-            />
-          }
+          path="/article"
+          element={<CompAffData data={data} setdata={setdata} />}
         />
+
         <Route
           path="/add"
           element={
-            <AddProduct
-              newData={newData}
-              setNewData={setNewData}
-              handleAdd={handleAdd}
-            />
+            <ProtectedRoute isAllowed={adminPrivate}>
+              {" "}
+              <AddProduct newData={newData} setNewData={setNewData} />{" "}
+            </ProtectedRoute>
           }
         />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route
-          path="/sign-in"
-          element={<SignIn setadminPrivate={setadminPrivate} />}
-        />
+        <Route path="/sign-in" element={<SignIn />} />
         <Route
           path="/private"
-          element={userPrivate ? <Private /> : <SignIn />}
+          element={
+            <ProtectedRoute isAllowed={userPrivate}>
+              {" "}
+              <Private />{" "}
+            </ProtectedRoute>
+          }
         />
+
         <Route
           path="/private-admin"
-          element={adminPrivate ? <PrivatePageForAdmin /> : <SignIn />}
+          element={
+            <ProtectedRoute isAllowed={adminPrivate}>
+              {" "}
+              <PrivatePageForAdmin />{" "}
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </>

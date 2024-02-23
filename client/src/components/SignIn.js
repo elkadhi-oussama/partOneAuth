@@ -1,8 +1,12 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { changeStateUser } from "../Redux/Slice/userSlice";
+import { changeStateAuthUser } from "../Redux/Slice/authSlice";
 
-const SignIn = ({ setadminPrivate }) => {
+const SignIn = () => {
+  const dispatch = useDispatch();
   const navigator = useNavigate();
   const [errorsHan, seterrorsHan] = useState(null);
   const [newUser, setnewUser] = useState({
@@ -19,10 +23,13 @@ const SignIn = ({ setadminPrivate }) => {
         "http://localhost:5000/user/login",
         newUser
       );
-      setadminPrivate(response.data.response.isAdmin);
+      console.log(response.data.response);
+      localStorage.setItem("Admin", response.data.response.isAdmin);
+      localStorage.setItem("token", response.data.token);
       if (response.status === 200) {
         navigator("/");
-        localStorage.setItem("token", response.data.token);
+        dispatch(changeStateUser());
+        dispatch(changeStateAuthUser(response.data.response.isAdmin));
       }
     } catch (error) {
       if (error.response.data.errors) {
